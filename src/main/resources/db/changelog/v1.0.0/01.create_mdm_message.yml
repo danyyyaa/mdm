@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-mdm-message-table
+      author: danil
+      changes:
+        - createTable:
+            tableName: mdm_message
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  remarks: "Уникальный идентификатор записи"
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: external_id
+                  type: uuid
+                  remarks: "Уникальный идентификатор сообщения из внешней системы"
+              - column:
+                  name: guid
+                  type: varchar
+                  remarks: "Уникальный идентификатор клиента"
+              - column:
+                  name: type
+                  type: varchar
+                  remarks: "Тип события"
+              - column:
+                  name: payload
+                  type: jsonb
+                  remarks: "Содержания события"
+              - column:
+                  name: create_time
+                  type: timestamp
+                  remarks: "Время создания"
+              - column:
+                  name: create_user
+                  type: varchar
+                  remarks: "Пользователь, создавший запись"
+              - column:
+                  name: last_update_time
+                  type: timestamp
+                  remarks: "Время последнего обновления"
+              - column:
+                  name: last_update_user
+                  type: varchar
+                  remarks: "Пользователь, внёсший последнее изменение"

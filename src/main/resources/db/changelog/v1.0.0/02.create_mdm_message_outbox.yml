@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: create-mdm-message-outbox-table
+      changes:
+        - createTable:
+            tableName: mdm_message_outbox
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: "Уникальный идентификатор записи"
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: mdm_message_id
+                  type: uuid
+                  remarks: "Уникальный идентификатор события из таблицы mdm_message"
+              - column:
+                  name: status
+                  type: varchar
+                  remarks: "Статус доставки сообщения"
+              - column:
+                  name: target
+                  type: varchar
+                  remarks: "Направление, куда должно быть доставлено сообщение"
+              - column:
+                  name: response_data
+                  type: jsonb
+                  remarks: "Ответ внешнего сервиса"
+              - column:
+                  name: create_time
+                  type: timestamp
+                  remarks: "Время создания"
+              - column:
+                  name: create_user
+                  type: varchar
+                  remarks: "Пользователь, создавший запись"
+              - column:
+                  name: last_update_time
+                  type: timestamp
+                  remarks: "Время последнего обновления"
+              - column:
+                  name: last_update_user
+                  type: varchar
+                  remarks: "Пользователь, внёсший последнее изменение"
+        - addForeignKeyConstraint:
+            baseTableName: mdm_message_outbox
+            baseColumnNames: mdm_message_id
+            referencedTableName: mdm_message
+            referencedColumnNames: id
+            constraintName: fk_mdm_msg_outbox_to_msg
