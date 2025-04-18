@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-mdm-message-table
+      id: 01.create-mdm-message-table
       author: danil
       changes:
         - createTable:

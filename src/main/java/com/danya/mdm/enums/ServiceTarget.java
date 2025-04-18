@@ -1,6 +1,6 @@
 package com.danya.mdm.enums;
 
-public enum Target {
+public enum ServiceTarget {
 
     USER_DATA_SERVICE_ONE,
     USER_DATA_SERVICE_TWO

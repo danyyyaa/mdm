@@ -1,12 +1,15 @@
 package com.danya.mdm.model;
 
-import com.danya.mdm.enums.Status;
-import com.danya.mdm.enums.Target;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.danya.mdm.dto.ResponseDataDto;
+import com.danya.mdm.enums.DeliveryStatus;
+import com.danya.mdm.enums.ServiceTarget;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -20,18 +23,28 @@ public class MdmMessageOutbox extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mdm_message_id",
-            foreignKey = @ForeignKey(name = "fk_mdm_msg_outbox_to_msg"))
-    private MdmMessage mdmMessage;
+    private UUID mdmMessageId;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private DeliveryStatus status;
 
     @Enumerated(EnumType.STRING)
-    private Target target;
+    private ServiceTarget target;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private JsonNode responseData;
+    private ResponseDataDto responseData;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MdmMessageOutbox mdmMessageOutbox = (MdmMessageOutbox) o;
+        return Objects.equals(id, mdmMessageOutbox.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

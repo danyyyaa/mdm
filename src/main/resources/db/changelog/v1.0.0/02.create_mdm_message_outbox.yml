@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 2
+      id: 02.create-mdm-message-outbox-table
       author: create-mdm-message-outbox-table
       changes:
         - createTable:
@@ -8,9 +8,8 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: bigint
+                  type: bigserial
                   remarks: "Уникальный идентификатор записи"
-                  autoIncrement: true
                   constraints:
                     primaryKey: true
               - column:
@@ -45,9 +44,3 @@ databaseChangeLog:
                   name: last_update_user
                   type: varchar
                   remarks: "Пользователь, внёсший последнее изменение"
-        - addForeignKeyConstraint:
-            baseTableName: mdm_message_outbox
-            baseColumnNames: mdm_message_id
-            referencedTableName: mdm_message
-            referencedColumnNames: id
-            constraintName: fk_mdm_msg_outbox_to_msg

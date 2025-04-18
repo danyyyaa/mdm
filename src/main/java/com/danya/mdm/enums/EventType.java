@@ -1,6 +1,6 @@
 package com.danya.mdm.enums;
 
-public enum Type {
+public enum EventType {
 
     USER_PHONE_CHANGE
 }
