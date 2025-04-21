@@ -1,0 +1,18 @@
+version: '3.3'
+
+volumes:
+  postgres_volume:
+
+services:
+  postgres-mdm:
+    image: postgres:latest
+    container_name: postgres-mdm
+    ports:
+      - "5436:5432"
+    restart: 'no'
+    environment:
+      POSTGRES_DB: mdm
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: Ab123456
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data

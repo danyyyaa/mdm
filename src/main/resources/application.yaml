@@ -1,0 +1,20 @@
+server:
+  port: ${MDM_PORT:9095}
+  servlet:
+    context-path: /${spring.application.name}
+
+spring:
+  application:
+    name: otp
+  datasource:
+    url: jdbc:postgresql://localhost:5436/mdm
+    username: dev
+    password: Ab123456
+    hikari:
+      schema: mdm
+      connection-init-sql: CREATE SCHEMA IF NOT EXISTS ${spring.datasource.hikari.schema};
+  liquibase:
+    change-log: ./db/changelog/changelog-master.yml
+  jpa:
+    hibernate:
+      ddl-auto: validate

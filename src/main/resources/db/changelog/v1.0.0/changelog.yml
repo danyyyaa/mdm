@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: release/1.0.0
+      author: "danil"
+      changes:
+        - tagDatabase:
+            tag: release/1.0.0
+  - include:
+      file: 01.create_mdm_message.yml
+      relativeToChangelogFile: true
+  - include:
+      file: 02.create_mdm_message_outbox.yml
+      relativeToChangelogFile: true
