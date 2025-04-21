@@ -1,8 +1,8 @@
 package com.danya.mdm.model;
 
 import com.danya.mdm.dto.ResponseDataDto;
-import com.danya.mdm.enums.DeliveryStatus;
-import com.danya.mdm.enums.ServiceTarget;
+import com.danya.mdm.enums.MdmDeliveryStatus;
+import com.danya.mdm.enums.MdmServiceTarget;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -26,10 +26,10 @@ public class MdmMessageOutbox extends AuditableEntity {
     private UUID mdmMessageId;
 
     @Enumerated(EnumType.STRING)
-    private DeliveryStatus status;
+    private MdmDeliveryStatus status;
 
     @Enumerated(EnumType.STRING)
-    private ServiceTarget target;
+    private MdmServiceTarget target;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")

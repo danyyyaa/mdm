@@ -1,6 +1,6 @@
 package com.danya.mdm.model;
 
-import com.danya.mdm.enums.EventType;
+import com.danya.mdm.enums.MdmEventType;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,7 +27,7 @@ public class MdmMessage extends AuditableEntity {
     private String guid;
 
     @Enumerated(EnumType.STRING)
-    private EventType type;
+    private MdmEventType type;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")

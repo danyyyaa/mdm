@@ -1,6 +1,6 @@
 package com.danya.mdm.enums;
 
-public enum DeliveryStatus {
+public enum MdmDeliveryStatus {
 
     NEW,
     DELIVERED,
