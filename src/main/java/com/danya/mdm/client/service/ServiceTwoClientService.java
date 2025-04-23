@@ -1,8 +1,8 @@
 package com.danya.mdm.client.service;
 
 import com.danya.mdm.client.ServiceTwoClient;
-import com.danya.mdm.client.dto.ServiceTwoUpdatePhoneRequestDto;
-import com.danya.mdm.client.dto.ServiceUpdatePhoneResponseDto;
+import com.danya.mdm.dto.ServiceTwoUpdatePhoneRequestDto;
+import com.danya.mdm.dto.ServiceUpdatePhoneResponseDto;
 import com.danya.mdm.exception.ServiceClientException;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;

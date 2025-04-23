@@ -1,8 +1,8 @@
 package com.danya.mdm.client.service;
 
 import com.danya.mdm.client.ServiceOneClient;
-import com.danya.mdm.client.dto.ServiceOneUpdatePhoneRequestDto;
-import com.danya.mdm.client.dto.ServiceUpdatePhoneResponseDto;
+import com.danya.mdm.dto.ServiceOneUpdatePhoneRequestDto;
+import com.danya.mdm.dto.ServiceUpdatePhoneResponseDto;
 import com.danya.mdm.exception.ServiceClientException;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class ServiceOneClientService {
     }
 
     public CompletableFuture<ServiceUpdatePhoneResponseDto> fallback(Exception e) {
-        log.error("Сервис 1 недоступен", e);
+        log.warn("Сервис 1 недоступен", e);
         return CompletableFuture.failedFuture(new ServiceClientException("Сервис 1 недоступен", e));
     }
 }

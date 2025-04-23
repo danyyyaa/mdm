@@ -14,14 +14,14 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "app.kafka.send-otp-in", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "mdm.kafka.send-mdm-in", name = "enabled", havingValue = "true")
 public class MdmPhoneChangeListener {
 
     private final ObjectMapper objectMapper;
     private final ValidationService validationService;
 
     @SneakyThrows
-    @KafkaListener(topics = "${app.kafka.send-otp-in.topic}", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${mdm.kafka.send-mdm-in.topic}", groupId = "${spring.kafka.consumer.group-id}")
     public void receiveResponse(ConsumerRecord<String, String> consumerRecord) {
         log.info("Получено сообщение из топика {}", consumerRecord.topic());
 

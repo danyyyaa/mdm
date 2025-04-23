@@ -19,10 +19,15 @@ public class ValidationService {
     public <T> void validate(T object) {
         Set<ConstraintViolation<T>> violations = validator.validate(object);
         if (!violations.isEmpty()) {
+            StringBuilder errorMessage = new StringBuilder("Validation errors: ");
             violations.forEach(v ->
-                    log.warn("Ошибка валидации: {} – {}", v.getPropertyPath(), v.getMessage())
+                    errorMessage.append(v.getPropertyPath())
+                            .append(" – ")
+                            .append(v.getMessage())
+                            .append("; ")
             );
-            throw new ConstraintViolationException(violations);
+            log.warn(errorMessage.toString());
+            throw new ConstraintViolationException(errorMessage.toString(), violations);
         }
     }
 }

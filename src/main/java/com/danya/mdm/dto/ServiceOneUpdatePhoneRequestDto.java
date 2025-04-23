@@ -1,4 +1,4 @@
-package com.danya.mdm.client.dto;
+package com.danya.mdm.dto;
 
 import lombok.Builder;
 

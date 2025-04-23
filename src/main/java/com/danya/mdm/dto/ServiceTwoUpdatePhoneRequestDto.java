@@ -1,4 +1,4 @@
-package com.danya.mdm.client.dto;
+package com.danya.mdm.dto;
 
 import lombok.Builder;
 
@@ -7,14 +7,15 @@ import java.util.UUID;
 
 @Builder
 public record ServiceTwoUpdatePhoneRequestDto(
-                                               UUID id,
-                                               String systemId,
-                                               List<Event> events
+        UUID id,
+        String systemId,
+        List<Event> events
 ) {
 
     public record Event(
             String eventType,
             String guid,
             String phone
-    ) { }
+    ) {
+    }
 }
