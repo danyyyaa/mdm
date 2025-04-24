@@ -18,3 +18,47 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+  kafka:
+    bootstrap-servers: 195.93.252.91:29092
+    producer:
+      acks: all
+    consumer:
+      group-id: danya
+  cloud:
+    openfeign:
+      client:
+        config:
+          service-one-client:
+            connect-timeout: 3000
+            read-timeout: 3000
+          service-two-client:
+            connect-timeout: 3000
+            read-timeout: 3000
+
+mdm:
+  kafka:
+    send-mdm-in:
+      enabled: true
+      topic: MDM.Change.Phone.IN.V1
+  integration:
+    service1-host: 195.93.252.91:8020
+    service2-host: 195.93.252.91:8020
+  executor:
+    service-one:
+      threads: 10
+      queue-depth: 1000
+    service-two:
+      threads: 10
+      queue-depth: 1000
+
+resilience4j:
+  rateLimiter:
+    instances:
+      service1-client:
+        timeoutDuration: 1s
+        limit-refresh-period: 1s
+        limit-for-period: 10
+      service2-client:
+        timeoutDuration: 1s
+        limit-refresh-period: 1s
+        limit-for-period: 10
