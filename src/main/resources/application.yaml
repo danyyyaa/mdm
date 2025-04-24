@@ -23,7 +23,7 @@ spring:
     producer:
       acks: all
     consumer:
-      group-id: mdm-mentoring-group
+      group-id: danya
   cloud:
     openfeign:
       client:
@@ -49,7 +49,7 @@ mdm:
       queue-depth: 10
     service-two:
       threads: 10
-      queue-depth: 10
+      queue-depth: 1000
 
 resilience4j:
   rateLimiter:
