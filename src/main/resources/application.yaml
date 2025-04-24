@@ -19,7 +19,7 @@ spring:
     hibernate:
       ddl-auto: validate
   kafka:
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: 195.93.252.91:29092
     producer:
       acks: all
     consumer:
@@ -46,7 +46,7 @@ mdm:
   executor:
     service-one:
       threads: 10
-      queue-depth: 10
+      queue-depth: 1000
     service-two:
       threads: 10
       queue-depth: 1000
