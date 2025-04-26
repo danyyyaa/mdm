@@ -7,6 +7,7 @@ import com.danya.mdm.exception.ServiceClientException;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
@@ -21,11 +22,11 @@ public class ServiceOneClientService {
     private final Executor serviceOneExecutor;
 
     @RateLimiter(name = "service1-client", fallbackMethod = "fallback")
-    public CompletableFuture<ServiceUpdatePhoneResponseDto> send(ServiceOneUpdatePhoneRequestDto dto) {
+    public CompletableFuture<ResponseEntity<ServiceUpdatePhoneResponseDto>> send(ServiceOneUpdatePhoneRequestDto dto) {
         return CompletableFuture.supplyAsync(() -> client.send(dto), serviceOneExecutor);
     }
 
-    public CompletableFuture<ServiceUpdatePhoneResponseDto> fallback(Exception e) {
+    public CompletableFuture<ResponseEntity<ServiceUpdatePhoneResponseDto>> fallback(Exception e) {
         log.warn("Сервис 1 недоступен", e);
         return CompletableFuture.failedFuture(new ServiceClientException("Сервис 1 недоступен", e));
     }

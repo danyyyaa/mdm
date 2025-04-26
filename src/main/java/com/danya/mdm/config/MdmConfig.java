@@ -4,10 +4,12 @@ import com.danya.mdm.property.MdmProperty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.concurrent.*;
 
 @Configuration
+@EnableScheduling
 @RequiredArgsConstructor
 public class MdmConfig {
 
@@ -23,6 +25,13 @@ public class MdmConfig {
     public Executor serviceTwoCallExecutor() {
         return createElasticExecutor(mdmProperty.executor().serviceTwo().threads(),
                 mdmProperty.executor().serviceTwo().queueDepth());
+    }
+
+    @Bean
+    public ExecutorService retrySendMessagesExecutor() {
+        return new ThreadPoolExecutor(1, 1,
+                0L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(1), new ThreadPoolExecutor.DiscardPolicy());
     }
 
     private ThreadPoolExecutor createElasticExecutor(int threads, int queueCapacity) {

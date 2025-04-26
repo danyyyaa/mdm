@@ -50,15 +50,24 @@ mdm:
     service-two:
       threads: 10
       queue-depth: 1000
+  scheduler:
+    retrySendMessagesJob:
+      retryMessagesTime: "0 0/5 * * * *"
+    lookback:
+      hours: 24
+      minutes: 15
+    page:
+      size: 100
+
 
 resilience4j:
   rateLimiter:
     instances:
       service1-client:
-        timeoutDuration: 1s
-        limit-refresh-period: 1s
-        limit-for-period: 10
+        timeoutDuration: 30s
+        limit-refresh-period: 1m
+        limit-for-period: 2
       service2-client:
-        timeoutDuration: 1s
-        limit-refresh-period: 1s
-        limit-for-period: 10
+#        timeoutDuration: 2s
+        limit-refresh-period: 1m
+        limit-for-period: 2

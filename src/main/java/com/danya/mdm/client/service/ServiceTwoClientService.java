@@ -7,6 +7,7 @@ import com.danya.mdm.exception.ServiceClientException;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
@@ -21,7 +22,7 @@ public class ServiceTwoClientService {
     private final Executor serviceTwoExecutor;
 
     @RateLimiter(name = "service2-client", fallbackMethod = "fallback")
-    public CompletableFuture<ServiceUpdatePhoneResponseDto> send(ServiceTwoUpdatePhoneRequestDto dto) {
+    public CompletableFuture<ResponseEntity<ServiceUpdatePhoneResponseDto>> send(ServiceTwoUpdatePhoneRequestDto dto) {
         return CompletableFuture.supplyAsync(() -> client.send(dto), serviceTwoExecutor);
     }
 

@@ -1,6 +1,7 @@
 package com.danya.mdm.listener;
 
 import com.danya.mdm.dto.ChangePhoneDto;
+import com.danya.mdm.service.MessageProcessingService;
 import com.danya.mdm.service.ValidationService;
 import com.danya.mdm.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +17,18 @@ import org.springframework.stereotype.Service;
 @ConditionalOnProperty(prefix = "mdm.kafka.send-mdm-in", name = "enabled", havingValue = "true")
 public class MdmPhoneChangeListener {
 
-    private final ValidationService validationService;
     private final JsonUtil jsonUtil;
+    private final MessageProcessingService messageProcessingService;
+    private final ValidationService validationService;
+
 
     @KafkaListener(topics = "${mdm.kafka.send-mdm-in.topic}", groupId = "${spring.kafka.consumer.group-id}")
     public void receiveResponse(ConsumerRecord<String, String> consumerRecord) {
         log.info("Получено сообщение из топика {}", consumerRecord.topic());
 
         ChangePhoneDto dto = jsonUtil.fromJson(consumerRecord.value(), ChangePhoneDto.class);
+
         validationService.validate(dto);
+        messageProcessingService.process(dto);
     }
 }
