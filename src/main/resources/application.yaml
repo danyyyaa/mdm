@@ -43,22 +43,19 @@ mdm:
   integration:
     service1-host: 195.93.252.91:8020
     service2-host: 195.93.252.91:8020
-  executor:
+  processing-pool:
     service-one:
       threads: 10
       queue-depth: 1000
     service-two:
       threads: 10
       queue-depth: 1000
+      size: 100
   scheduler:
     retrySendMessagesJob:
-      retryMessagesTime: "0 0/5 * * * *"
-    lookback:
-      hours: 24
-      minutes: 15
-    page:
-      size: 100
-
+      lookback-hours: 24
+      lag-minutes: 15
+      page-size: 100
 
 resilience4j:
   rateLimiter:
@@ -68,6 +65,6 @@ resilience4j:
         limit-refresh-period: 1m
         limit-for-period: 2
       service2-client:
-#        timeoutDuration: 2s
+        timeoutDuration: 30s
         limit-refresh-period: 1m
         limit-for-period: 2

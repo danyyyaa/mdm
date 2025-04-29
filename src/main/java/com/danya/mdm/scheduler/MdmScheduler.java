@@ -27,24 +27,27 @@ public class MdmScheduler {
     private final MdmProperty property;
 
     @Async("retrySendMessagesExecutor")
-    @Scheduled(cron = "${mdm.scheduler.retrySendMessagesJob.retryMessagesTime}")
+    @Scheduled(cron = "0 0/5 * * * *")
     public void retrySendMessagesJob() {
         log.info("Старт джобы: retrySendMessagesJob");
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime from = now.minusHours(property.scheduler().lookback().hours());
-        LocalDateTime to = now.minusMinutes(property.scheduler().lookback().minutes());
+        var job = property.scheduler().retrySendMessagesJob();
+        LocalDateTime now  = LocalDateTime.now();
+        LocalDateTime from = now.minusHours(job.lookbackHours());
+        LocalDateTime to   = now.minusMinutes(job.lagMinutes());
 
-        Pageable page = PageRequest.of(0, property.scheduler().page().size(),
-                Sort.by("lastUpdateTime").ascending());
+        Pageable page = PageRequest.of(
+                0,
+                job.pageSize(),
+                Sort.by("lastUpdateTime").ascending()
+        );
+
         List<MdmMessageOutbox> batch = outboxRepository.fetchBatch(
-                from,
-                to,
-                List.of(MdmDeliveryStatus.NEW, MdmDeliveryStatus.ERROR),
-                page
+                from, to, List.of(MdmDeliveryStatus.NEW, MdmDeliveryStatus.ERROR), page
         );
 
         messageProcessingService.process(batch);
         log.info("Финиш джобы: retrySendMessagesJob");
     }
+
 }

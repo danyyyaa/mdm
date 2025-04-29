@@ -17,14 +17,14 @@ public class MdmConfig {
 
     @Bean(name = "serviceOneExecutor")
     public Executor serviceOneCallExecutor() {
-        return createElasticExecutor(mdmProperty.executor().serviceOne().threads(),
-                mdmProperty.executor().serviceOne().queueDepth());
+        return createElasticExecutor(mdmProperty.processingPool().serviceOne().threads(),
+                mdmProperty.processingPool().serviceOne().queueDepth());
     }
 
     @Bean(name = "serviceTwoExecutor")
     public Executor serviceTwoCallExecutor() {
-        return createElasticExecutor(mdmProperty.executor().serviceTwo().threads(),
-                mdmProperty.executor().serviceTwo().queueDepth());
+        return createElasticExecutor(mdmProperty.processingPool().serviceTwo().threads(),
+                mdmProperty.processingPool().serviceTwo().queueDepth());
     }
 
     @Bean
