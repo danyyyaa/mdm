@@ -24,11 +24,15 @@ public class MdmPhoneChangeListener {
 
     @KafkaListener(topics = "${mdm.kafka.send-mdm-in.topic}", groupId = "${spring.kafka.consumer.group-id}")
     public void receiveResponse(ConsumerRecord<String, String> consumerRecord) {
-        log.info("Получено сообщение из топика {}", consumerRecord.topic());
+        try {
+            log.info("Получено сообщение из топика {}", consumerRecord.topic());
 
-        ChangePhoneDto dto = jsonUtil.fromJson(consumerRecord.value(), ChangePhoneDto.class);
+            ChangePhoneDto dto = jsonUtil.fromJson(consumerRecord.value(), ChangePhoneDto.class);
 
-        validationService.validate(dto);
-        messageProcessingService.process(dto);
+            validationService.validate(dto);
+            messageProcessingService.process(dto);
+        } catch (Exception e) {
+            log.warn("Произошла ошибка при обработке сообщения: {}", e.getMessage(), e);
+        }
     }
 }

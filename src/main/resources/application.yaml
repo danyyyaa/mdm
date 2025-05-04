@@ -17,7 +17,7 @@ spring:
     change-log: ./db/changelog/changelog-master.yml
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create-drop
   kafka:
     bootstrap-servers: 195.93.252.91:29092
     producer:

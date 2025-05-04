@@ -45,4 +45,9 @@ public interface MdmMessageOutboxRepository extends JpaRepository<MdmMessageOutb
             @Param("statuses") Collection<MdmDeliveryStatus> statuses,
             Pageable pageable
     );
+
+    List<MdmMessageOutbox> findByMdmMessageIdAndStatusIn(
+            UUID mdmMessageId,
+            Collection<MdmDeliveryStatus> statuses
+    );
 }
