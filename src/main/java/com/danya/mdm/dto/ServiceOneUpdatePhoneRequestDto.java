@@ -10,11 +10,13 @@ public record ServiceOneUpdatePhoneRequestDto(
         Body body
 ) {
 
+    @Builder
     public record Meta(
             String systemId,
             String sender
     ) { }
 
+    @Builder
     public record Body(
             UUID id,
             String guid,

@@ -1,7 +1,6 @@
 package com.danya.mdm.model;
 
 import com.danya.mdm.enums.MdmEventType;
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -31,7 +30,7 @@ public class MdmMessage extends AuditableEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private JsonNode payload;
+    private String payload;
 
     @Override
     public boolean equals(Object o) {
