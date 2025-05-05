@@ -17,7 +17,7 @@ spring:
     change-log: ./db/changelog/changelog-master.yml
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
   kafka:
     bootstrap-servers: 195.93.252.91:29092
     producer:
@@ -53,6 +53,7 @@ mdm:
       size: 100
   scheduler:
     retrySendMessagesJob:
+      retry-interval: "0 0/5 * * * *"
       lookback-hours: 24
       lag-minutes: 15
       page-size: 100

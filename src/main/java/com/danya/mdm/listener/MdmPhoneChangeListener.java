@@ -1,6 +1,7 @@
 package com.danya.mdm.listener;
 
 import com.danya.mdm.dto.ChangePhoneDto;
+import com.danya.mdm.exception.MdmException;
 import com.danya.mdm.service.MessageProcessingService;
 import com.danya.mdm.service.ValidationService;
 import com.danya.mdm.util.JsonUtil;
@@ -25,14 +26,16 @@ public class MdmPhoneChangeListener {
     @KafkaListener(topics = "${mdm.kafka.send-mdm-in.topic}", groupId = "${spring.kafka.consumer.group-id}")
     public void receiveResponse(ConsumerRecord<String, String> consumerRecord) {
         try {
-            log.info("Получено сообщение из топика {}", consumerRecord.topic());
+            log.info("Получено сообщение из топика {}: {}", consumerRecord.topic(), consumerRecord.value());
 
             ChangePhoneDto dto = jsonUtil.fromJson(consumerRecord.value(), ChangePhoneDto.class);
 
             validationService.validate(dto);
             messageProcessingService.process(dto);
-        } catch (Exception e) {
+        } catch (MdmException e) {
             log.warn("Произошла ошибка при обработке сообщения: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("Произошла ошибка при обработке сообщения: {}", e.getMessage(), e);
         }
     }
 }

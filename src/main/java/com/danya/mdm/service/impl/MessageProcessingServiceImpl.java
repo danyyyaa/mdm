@@ -49,13 +49,13 @@ public class MessageProcessingServiceImpl implements MessageProcessingService {
             });
         }
 
-        List<MdmMessageOutbox> pending = outboxRepository
+        List<MdmMessageOutbox> toSend = outboxRepository
                 .findByMdmMessageIdAndStatusIn(
                         dto.id(),
                         List.of(MdmDeliveryStatus.NEW, MdmDeliveryStatus.ERROR)
                 );
 
-        pending.forEach(o -> sendToService(dto, o.getTarget()));
+        toSend.forEach(outbox -> sendToService(dto, outbox.getTarget()));
     }
 
     private void sendToService(ChangePhoneDto dto, MdmServiceTarget target) {

@@ -9,6 +9,7 @@ import com.danya.mdm.repository.MdmMessageOutboxRepository;
 import com.danya.mdm.repository.MdmMessageRepository;
 import com.danya.mdm.service.MessageProcessingService;
 import com.danya.mdm.util.JsonUtil;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +34,7 @@ public class MdmScheduler {
     private final MdmProperty property;
 
     @Async("retrySendMessagesExecutor")
-    @Scheduled(cron = "0 0/5 * * * *")
+    @Scheduled(cron = "${mdm.scheduler.retrySendMessagesJob.retry-interval}")
     public void retrySendMessagesJob() {
         log.info("Старт джобы: retrySendMessagesJob");
 
@@ -79,7 +80,7 @@ public class MdmScheduler {
         batch.forEach(outbox -> {
             try {
                 MdmMessage msg = messageRepository.findByExternalId(outbox.getMdmMessageId())
-                        .orElseThrow(() -> new IllegalStateException(
+                        .orElseThrow(() -> new EntityNotFoundException(
                                 "Message not found for externalId: " + outbox.getMdmMessageId()));
 
                 ChangePhoneDto dto = jsonUtil.fromJson(msg.getPayload(), ChangePhoneDto.class);
