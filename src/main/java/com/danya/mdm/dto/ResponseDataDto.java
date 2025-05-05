@@ -12,6 +12,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class ResponseDataDto {
-    private String deserializedResponse;
-    private List<String> errorMessages;
+    private String response;
+    private List<String> errors;
 }
