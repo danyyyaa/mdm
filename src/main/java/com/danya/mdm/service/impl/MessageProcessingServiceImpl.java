@@ -109,8 +109,8 @@ public class MessageProcessingServiceImpl implements MessageProcessingService {
                 : Collections.emptyList();
 
         ResponseDataDto data = ResponseDataDto.builder()
-                .deserializedResponse(raw)
-                .errorMessages(errors)
+                .response(raw)
+                .errors(errors)
                 .build();
 
         outboxRepository.updateDeliveryStatusById(businessId, status, data);
@@ -121,8 +121,8 @@ public class MessageProcessingServiceImpl implements MessageProcessingService {
                              Integer httpStatus,
                              String serviceName) {
         ResponseDataDto data = ResponseDataDto.builder()
-                .deserializedResponse(errorMessage)
-                .errorMessages(List.of(errorMessage))
+                .response(errorMessage)
+                .errors(List.of(errorMessage))
                 .build();
 
         outboxRepository.updateDeliveryStatusById(businessId, MdmDeliveryStatus.ERROR, data);
