@@ -10,7 +10,6 @@ import com.danya.mdm.service.ServiceOneSender;
 import com.danya.mdm.service.ServiceTwoSender;
 import com.danya.mdm.service.TransactionalService;
 import com.danya.mdm.util.JsonUtil;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +34,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MessageProcessingServiceImplTest {
 
+    private static UUID businessId = UUID.randomUUID();
+    private static ChangePhoneDto dto = ChangePhoneDto.builder()
+            .id(businessId)
+            .guid(UUID.randomUUID().toString())
+            .type(USER_PHONE_CHANGE)
+            .phone("+71234567890")
+            .build();
+
     @Mock
     private MdmMessageRepository messageRepository;
     @Mock
@@ -50,20 +57,6 @@ class MessageProcessingServiceImplTest {
 
     @InjectMocks
     private MessageProcessingServiceImpl service;
-
-    private static UUID businessId;
-    private static ChangePhoneDto dto;
-
-    @BeforeAll
-    static void init() {
-        businessId = UUID.randomUUID();
-        dto = ChangePhoneDto.builder()
-                .id(businessId)
-                .guid(UUID.randomUUID().toString())
-                .type(USER_PHONE_CHANGE)
-                .phone("+71234567890")
-                .build();
-    }
 
     @Test
     void process_newMessage_sendsBoth_andMarksDelivered() {

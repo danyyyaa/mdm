@@ -18,23 +18,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 @AutoConfigureWireMock(port = 0)
 @Import(AbstractTest.KafkaTopicConfig.class)
-@TestPropertySource(properties = {
-        "mdm.kafka.send-mdm-in.enabled=true",
-        "mdm.kafka.send-mdm-in.topic=phone-change-topic",
-        "mdm.integration.service1-host=http://localhost:${wiremock.server.port}",
-        "mdm.integration.service2-host=http://localhost:${wiremock.server.port}"
-})
 public abstract class AbstractTest {
 
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
@@ -54,8 +49,6 @@ public abstract class AbstractTest {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
-        registry.add("spring.kafka.consumer.group-id", () -> "test-group");
-        registry.add("mdm.kafka.send-mdm-in.topic", () -> "phone-change-topic");
     }
 
     @Autowired

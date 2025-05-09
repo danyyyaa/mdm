@@ -1,0 +1,14 @@
+spring:
+  kafka:
+    consumer:
+      group-id: test-group
+
+mdm:
+  kafka:
+    send-mdm-in:
+      enabled: true
+      topic: phone-change-topic
+
+  integration:
+    service1-host: http://localhost:${wiremock.server.port}
+    service2-host: http://localhost:${wiremock.server.port}

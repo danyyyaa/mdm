@@ -25,6 +25,7 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
 class MdmPhoneChangeListenerTest extends AbstractTest {
+
     private static final String SERVICE_ONE_PATH = "/user-data-service-one/update-phone";
     private static final String SERVICE_TWO_PATH = "/user-data-service-two/user/update/phone";
 
@@ -54,26 +55,27 @@ class MdmPhoneChangeListenerTest extends AbstractTest {
                         .willReturn(okJson(responseJson))
         );
 
-        kafkaTemplate.send("phone-change-topic", payload);
+        kafkaTemplate.send("phone-change-topic", payload).get();
         kafkaTemplate.flush();
 
         await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> {
-            assertThat(mdmMessageRepository
-                    .findByExternalId(dto.id())).isPresent();
+            assertThat(mdmMessageRepository.findByExternalId(dto.id())).isPresent();
 
             var outboxes = mdmMessageOutboxRepository
-                    .findByMdmMessageIdAndStatusIn(
-                            dto.id(), List.of(MdmDeliveryStatus.DELIVERED)
-                    );
+                    .findByMdmMessageIdAndStatusIn(dto.id(), List.of(MdmDeliveryStatus.DELIVERED));
             assertThat(outboxes).hasSize(2);
 
-            wireMockServer.verify(
-                    1, postRequestedFor(urlEqualTo(SERVICE_ONE_PATH))
-                            .withRequestBody(containing(dto.id().toString()))
+            wireMockServer.verify(1, postRequestedFor(urlEqualTo(SERVICE_ONE_PATH))
+                    .withRequestBody(matchingJsonPath("$.body.id",    equalTo(dto.id().toString())))
+                    .withRequestBody(matchingJsonPath("$.body.guid",  equalTo(dto.guid())))
+                    .withRequestBody(matchingJsonPath("$.body.phone", equalTo(dto.phone())))
             );
-            wireMockServer.verify(
-                    1, postRequestedFor(urlEqualTo(SERVICE_TWO_PATH))
-                            .withRequestBody(containing(dto.id().toString()))
+
+            wireMockServer.verify(1, postRequestedFor(urlEqualTo(SERVICE_TWO_PATH))
+                    .withRequestBody(matchingJsonPath("$.id",                      equalTo(dto.id().toString())))
+                    .withRequestBody(matchingJsonPath("$.events[0].eventType",    equalTo("change_phone")))
+                    .withRequestBody(matchingJsonPath("$.events[0].guid",         equalTo(dto.guid())))
+                    .withRequestBody(matchingJsonPath("$.events[0].phone",        equalTo(dto.phone())))
             );
         });
     }
