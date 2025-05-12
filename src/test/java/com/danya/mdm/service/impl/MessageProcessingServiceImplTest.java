@@ -75,8 +75,9 @@ class MessageProcessingServiceImplTest {
                 .mdmMessageId(businessId).target(USER_DATA_SERVICE_ONE).status(NEW).build();
         MdmMessageOutbox ob2 = MdmMessageOutbox.builder()
                 .mdmMessageId(businessId).target(USER_DATA_SERVICE_TWO).status(NEW).build();
-        when(outboxRepository.findByMdmMessageIdAndStatusIn(eq(businessId), anyList()))
-                .thenReturn(List.of(ob1, ob2));
+
+        when(outboxRepository.save(any(MdmMessageOutbox.class)))
+                .thenReturn(ob1, ob2);
 
         ServiceUpdatePhoneResponseDto respDto = ServiceUpdatePhoneResponseDto.builder()
                 .body(new ServiceUpdatePhoneResponseDto.Body(businessId, SUCCESS, null))
@@ -101,7 +102,7 @@ class MessageProcessingServiceImplTest {
         verify(serviceOneSender).send(req1);
         verify(serviceTwoSender).send(req2);
         verify(outboxRepository, times(2))
-                .updateDeliveryStatusById(eq(businessId), eq(DELIVERED), any(ResponseDataDto.class));
+                .updateDeliveryStatusByMdmMessageId(eq(businessId), eq(DELIVERED), any(ResponseDataDto.class));
     }
 
 
@@ -133,7 +134,7 @@ class MessageProcessingServiceImplTest {
 
         verify(serviceOneSender).send(req1);
         verify(outboxRepository)
-                .updateDeliveryStatusById(eq(businessId), eq(DELIVERED), any(ResponseDataDto.class));
+                .updateDeliveryStatusByMdmMessageId(eq(businessId), eq(DELIVERED), any(ResponseDataDto.class));
     }
 
     @Test
@@ -154,6 +155,6 @@ class MessageProcessingServiceImplTest {
         service.process(dto);
 
         verify(outboxRepository)
-                .updateDeliveryStatusById(eq(businessId), eq(MdmDeliveryStatus.ERROR), any(ResponseDataDto.class));
+                .updateDeliveryStatusByMdmMessageId(eq(businessId), eq(MdmDeliveryStatus.FATAL_ERROR), any(ResponseDataDto.class));
     }
 }

@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03.create_shedlock.yml
+      author: danil
+      preConditions:
+        - not:
+            tableExists:
+              tableName: shedlock
+      changes:
+        - createTable:
+            tableName: shedlock
+            columns:
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: lock_until
+                  type: timestamp
+              - column:
+                  name: locked_at
+                  type: timestamp
+              - column:
+                  name: locked_by
+                  type: varchar(255)

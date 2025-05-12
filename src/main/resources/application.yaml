@@ -57,6 +57,9 @@ mdm:
       lookback-hours: 24
       lag-minutes: 15
       page-size: 100
+    deleteOldMessagesJob:
+      delete-interval: "* * 0 * * *"
+      threshold-weeks: 8
 
 resilience4j:
   rateLimiter:
@@ -69,3 +72,21 @@ resilience4j:
         timeoutDuration: 30s
         limit-refresh-period: 1m
         limit-for-period: 2
+
+  circuitbreaker:
+    instances:
+      service1-client:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 100
+        failureRateThreshold: 50
+        waitDurationInOpenState: 1m
+        permittedNumberOfCallsInHalfOpenState: 10
+      service2-client:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 100
+        failureRateThreshold: 50
+        waitDurationInOpenState: 1m
+        permittedNumberOfCallsInHalfOpenState: 10
+

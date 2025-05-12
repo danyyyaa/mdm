@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 02.create-mdm-message-outbox-table
-      author: create-mdm-message-outbox-table
+      author: danil
       changes:
         - createTable:
             tableName: mdm_message_outbox

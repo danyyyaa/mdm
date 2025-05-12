@@ -4,6 +4,7 @@ import com.danya.mdm.client.ServiceTwoClient;
 import com.danya.mdm.dto.ServiceTwoUpdatePhoneRequestDto;
 import com.danya.mdm.dto.ServiceUpdatePhoneResponseDto;
 import com.danya.mdm.exception.ServiceClientException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ public class ServiceTwoClientService {
     private final Executor serviceTwoExecutor;
 
     @RateLimiter(name = "service2-client", fallbackMethod = "fallback")
+    @CircuitBreaker(name = "service2-client", fallbackMethod = "fallback")
     public CompletableFuture<ResponseEntity<ServiceUpdatePhoneResponseDto>> send(ServiceTwoUpdatePhoneRequestDto dto) {
         return CompletableFuture.supplyAsync(() -> client.send(dto), serviceTwoExecutor);
     }
