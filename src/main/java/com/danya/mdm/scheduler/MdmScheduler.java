@@ -39,6 +39,7 @@ public class MdmScheduler {
     private final JsonUtil jsonUtil;
     private final MdmProperty property;
 
+    @Async("deleteOldMessagesExecutor")
     @Scheduled(cron = "${mdm.scheduler.deleteOldMessagesJob.delete-interval}")
     @SchedulerLock(name = "deleteOldMessages", lockAtLeastFor = "15s", lockAtMostFor = "2m")
     public void deleteOldMessages() {
