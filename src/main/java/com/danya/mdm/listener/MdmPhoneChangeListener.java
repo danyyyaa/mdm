@@ -8,6 +8,7 @@ import com.danya.mdm.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.slf4j.MDC;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -22,9 +23,15 @@ public class MdmPhoneChangeListener {
     private final MessageProcessingService messageProcessingService;
     private final ValidationService validationService;
 
-
     @KafkaListener(topics = "${mdm.kafka.send-mdm-in.topic}", groupId = "${spring.kafka.consumer.group-id}")
     public void receiveResponse(ConsumerRecord<String, String> consumerRecord) {
+        MDC.put("kafka.topic", consumerRecord.topic());
+        MDC.put("kafka.partition", String.valueOf(consumerRecord.partition()));
+        MDC.put("kafka.offset", String.valueOf(consumerRecord.offset()));
+        if (consumerRecord.key() != null) {
+            MDC.put("kafka.key", consumerRecord.key());
+        }
+
         try {
             log.info("Получено сообщение из топика {}: {}", consumerRecord.topic(), consumerRecord.value());
 
@@ -36,6 +43,8 @@ public class MdmPhoneChangeListener {
             log.warn("Произошла ошибка при обработке сообщения: {}", e.getMessage(), e);
         } catch (Exception e) {
             log.error("Произошла ошибка при обработке сообщения: {}", e.getMessage(), e);
+        } finally {
+            MDC.clear();
         }
     }
 }
