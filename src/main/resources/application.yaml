@@ -5,7 +5,7 @@ server:
 
 spring:
   application:
-    name: otp
+    name: mdm
   datasource:
     url: jdbc:postgresql://localhost:5436/mdm
     username: dev
@@ -34,6 +34,10 @@ spring:
           service-two-client:
             connect-timeout: 3000
             read-timeout: 3000
+  cache:
+    caffeine:
+      spec: expireAfterAccess=0s, maximumSize=1000
+    cache-names: mdmErrorCount
 
 logging:
   console:
@@ -71,6 +75,8 @@ mdm:
     deleteOldMessagesJob:
       delete-interval: "0 0 0 * * *"
       threshold-weeks: 8
+  metrics:
+    undelivered-events: mdm.undelivered.events
 
 resilience4j:
   rateLimiter:
@@ -107,4 +113,10 @@ resilience4j:
         slow-call-duration-threshold: 2s
         waitDurationInOpenState: 1m
         permittedNumberOfCallsInHalfOpenState: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, health, prometheus
 

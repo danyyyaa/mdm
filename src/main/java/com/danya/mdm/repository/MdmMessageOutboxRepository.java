@@ -59,4 +59,6 @@ public interface MdmMessageOutboxRepository extends JpaRepository<MdmMessageOutb
     @Modifying
     @Transactional
     void deleteByMdmMessageIdIn(Collection<UUID> ids);
+
+    Long countByStatusIn(Collection<MdmDeliveryStatus> statuses);
 }
