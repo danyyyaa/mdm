@@ -25,11 +25,11 @@ public class MdmPhoneChangeListener {
 
     @KafkaListener(topics = "${mdm.kafka.send-mdm-in.topic}", groupId = "${spring.kafka.consumer.group-id}")
     public void receiveResponse(ConsumerRecord<String, String> consumerRecord) {
-        MDC.put("kafka.topic", consumerRecord.topic());
-        MDC.put("kafka.partition", String.valueOf(consumerRecord.partition()));
-        MDC.put("kafka.offset", String.valueOf(consumerRecord.offset()));
+        MDC.put("kafkaTopic", consumerRecord.topic());
+        MDC.put("kafkaPartition", String.valueOf(consumerRecord.partition()));
+        MDC.put("kafkaOffset", String.valueOf(consumerRecord.offset()));
         if (consumerRecord.key() != null) {
-            MDC.put("kafka.key", consumerRecord.key());
+            MDC.put("kafkaKey", consumerRecord.key());
         }
 
         try {
