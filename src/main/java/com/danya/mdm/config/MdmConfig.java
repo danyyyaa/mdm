@@ -34,6 +34,13 @@ public class MdmConfig {
                 new ArrayBlockingQueue<>(1), new ThreadPoolExecutor.DiscardPolicy());
     }
 
+    @Bean
+    public ExecutorService deleteOldMessagesExecutor() {
+        return new ThreadPoolExecutor(1, 1,
+                0L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(1), new ThreadPoolExecutor.DiscardPolicy());
+    }
+
     private ThreadPoolExecutor createElasticExecutor(int threads, int queueCapacity) {
         BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(queueCapacity);
 

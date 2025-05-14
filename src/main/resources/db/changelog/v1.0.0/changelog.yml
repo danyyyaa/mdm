@@ -11,3 +11,6 @@ databaseChangeLog:
   - include:
       file: 02.create_mdm_message_outbox.yml
       relativeToChangelogFile: true
+  - include:
+      file: 03.create_shedlock.yml
+      relativeToChangelogFile: true
