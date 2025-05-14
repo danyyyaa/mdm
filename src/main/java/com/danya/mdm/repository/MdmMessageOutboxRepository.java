@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-public interface MdmMessageOutboxRepository extends JpaRepository<MdmMessageOutbox, UUID> {
+public interface MdmMessageOutboxRepository extends JpaRepository<MdmMessageOutbox, Long> {
 
     @Modifying
     @Transactional
@@ -23,10 +23,10 @@ public interface MdmMessageOutboxRepository extends JpaRepository<MdmMessageOutb
             UPDATE MdmMessageOutbox m 
                SET m.status       = :status,
                    m.responseData = :responseData
-             WHERE m.mdmMessageId = :id
+             WHERE m.mdmMessageId = :mdmMessageId
             """)
-    void updateDeliveryStatusById(
-            @Param("id") UUID id,
+    void updateDeliveryStatusByMdmMessageId(
+            @Param("mdmMessageId") UUID mdmMessageId,
             @Param("status") MdmDeliveryStatus status,
             @Param("responseData") ResponseDataDto responseDataDto
     );
@@ -50,4 +50,13 @@ public interface MdmMessageOutboxRepository extends JpaRepository<MdmMessageOutb
             UUID mdmMessageId,
             Collection<MdmDeliveryStatus> statuses
     );
+
+    List<MdmMessageOutbox> findByStatusAndLastUpdateTimeBefore(
+            MdmDeliveryStatus status,
+            LocalDateTime threshold
+    );
+
+    @Modifying
+    @Transactional
+    void deleteByMdmMessageIdIn(Collection<UUID> ids);
 }

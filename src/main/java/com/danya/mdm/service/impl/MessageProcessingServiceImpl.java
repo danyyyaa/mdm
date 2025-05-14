@@ -21,10 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -41,19 +38,20 @@ public class MessageProcessingServiceImpl implements MessageProcessingService {
     @Override
     public void process(ChangePhoneDto dto) {
         boolean isNew = messageRepository.findByExternalId(dto.id()).isEmpty();
+        List<MdmMessageOutbox> toSend = new ArrayList<>();
+
         if (isNew) {
             transactionalService.runInNewTransaction(() -> {
-                var saved = saveMessage(dto);
-                saveOutbox(saved.getExternalId(), MdmServiceTarget.USER_DATA_SERVICE_ONE);
-                saveOutbox(saved.getExternalId(), MdmServiceTarget.USER_DATA_SERVICE_TWO);
+                MdmMessage saved = saveMessage(dto);
+                toSend.add(saveOutbox(saved.getExternalId(), MdmServiceTarget.USER_DATA_SERVICE_ONE));
+                toSend.add(saveOutbox(saved.getExternalId(), MdmServiceTarget.USER_DATA_SERVICE_TWO));
             });
+        } else {
+            toSend.addAll(outboxRepository.findByMdmMessageIdAndStatusIn(
+                    dto.id(),
+                    List.of(MdmDeliveryStatus.NEW, MdmDeliveryStatus.ERROR)
+            ));
         }
-
-        List<MdmMessageOutbox> toSend = outboxRepository
-                .findByMdmMessageIdAndStatusIn(
-                        dto.id(),
-                        List.of(MdmDeliveryStatus.NEW, MdmDeliveryStatus.ERROR)
-                );
 
         toSend.forEach(outbox -> sendToService(dto, outbox.getTarget()));
     }
@@ -88,22 +86,21 @@ public class MessageProcessingServiceImpl implements MessageProcessingService {
         return messageRepository.save(message);
     }
 
-    private void saveOutbox(UUID externalId, MdmServiceTarget target) {
+    private MdmMessageOutbox saveOutbox(UUID externalId, MdmServiceTarget target) {
         MdmMessageOutbox outbox = MdmMessageOutbox.builder()
                 .mdmMessageId(externalId)
                 .status(MdmDeliveryStatus.NEW)
                 .target(target)
                 .responseData(null)
                 .build();
-        outboxRepository.save(outbox);
+        return outboxRepository.save(outbox);
     }
 
-    private void handleResponse(ResponseEntity<ServiceUpdatePhoneResponseDto> response,
-                                UUID businessId) {
+    private void handleResponse(ResponseEntity<ServiceUpdatePhoneResponseDto> response, UUID externalId) {
         ServiceUpdatePhoneResponseDto body = response.getBody();
         String raw = jsonUtil.toJson(body);
 
-        MdmDeliveryStatus status = determineStatus(response, body, businessId);
+        MdmDeliveryStatus status = determineStatus(response, body, externalId);
         List<String> errors = status == MdmDeliveryStatus.ERROR
                 ? extractErrorMessages(body)
                 : Collections.emptyList();
@@ -113,10 +110,10 @@ public class MessageProcessingServiceImpl implements MessageProcessingService {
                 .errors(errors)
                 .build();
 
-        outboxRepository.updateDeliveryStatusById(businessId, status, data);
+        outboxRepository.updateDeliveryStatusByMdmMessageId(externalId, status, data);
     }
 
-    private void handleError(UUID businessId,
+    private void handleError(UUID externalId,
                              String errorMessage,
                              Integer httpStatus,
                              String serviceName) {
@@ -125,25 +122,25 @@ public class MessageProcessingServiceImpl implements MessageProcessingService {
                 .errors(List.of(errorMessage))
                 .build();
 
-        outboxRepository.updateDeliveryStatusById(businessId, MdmDeliveryStatus.ERROR, data);
+        outboxRepository.updateDeliveryStatusByMdmMessageId(externalId, MdmDeliveryStatus.FATAL_ERROR, data);
 
         if (httpStatus != null) {
-            log.warn("{} вернул {} для сообщения {}: {}", serviceName, httpStatus, businessId, errorMessage);
+            log.warn("{} вернул {} для сообщения {}: {}", serviceName, httpStatus, externalId, errorMessage);
         } else {
-            log.error("Неожиданная ошибка при отправке в {} для сообщения {}: {}", serviceName, businessId, errorMessage);
+            log.error("Неожиданная ошибка при отправке в {} для сообщения {}: {}", serviceName, externalId, errorMessage);
         }
     }
 
     private MdmDeliveryStatus determineStatus(ResponseEntity<ServiceUpdatePhoneResponseDto> response,
                                               ServiceUpdatePhoneResponseDto dto,
-                                              UUID businessId) {
+                                              UUID externalId) {
         if (!response.getStatusCode().is2xxSuccessful() ||
                 Optional.ofNullable(dto)
                         .map(ServiceUpdatePhoneResponseDto::body)
                         .map(ServiceUpdatePhoneResponseDto.Body::status)
                         .orElse(ResponseStatus.FAILED) != ResponseStatus.SUCCESS) {
             log.warn("Ошибка доставки для {}: HTTP {}, response.status={}",
-                    businessId,
+                    externalId,
                     response.getStatusCode().value(),
                     Optional.ofNullable(dto)
                             .map(ServiceUpdatePhoneResponseDto::body)
@@ -151,7 +148,7 @@ public class MessageProcessingServiceImpl implements MessageProcessingService {
                             .orElse(ResponseStatus.FAILED));
             return MdmDeliveryStatus.ERROR;
         }
-        log.info("Сообщение {} успешно доставлено", businessId);
+        log.info("Сообщение {} успешно доставлено", externalId);
         return MdmDeliveryStatus.DELIVERED;
     }
 

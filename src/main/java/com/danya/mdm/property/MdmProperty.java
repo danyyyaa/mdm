@@ -17,12 +17,18 @@ public record MdmProperty(
     }
 
     public record Scheduler(
-            RetrySendMessagesJob retrySendMessagesJob
+            RetrySendMessagesJob retrySendMessagesJob,
+            DeleteOldMessagesJob deleteOldMessagesJob
     ) {
         public record RetrySendMessagesJob(
                 int lookbackHours,
                 int lagMinutes,
                 int pageSize
+        ) {
+        }
+
+        public record DeleteOldMessagesJob(
+                int thresholdWeeks
         ) {
         }
     }
