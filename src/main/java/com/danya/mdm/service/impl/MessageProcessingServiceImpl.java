@@ -38,20 +38,19 @@ public class MessageProcessingServiceImpl implements MessageProcessingService {
     @Override
     public void process(ChangePhoneDto dto) {
         boolean isNew = messageRepository.findByExternalId(dto.id()).isEmpty();
-        List<MdmMessageOutbox> toSend;
+        List<MdmMessageOutbox> toSend = new ArrayList<>();
+
         if (isNew) {
-            List<MdmMessageOutbox> newToSend = new ArrayList<>();
             transactionalService.runInNewTransaction(() -> {
                 MdmMessage saved = saveMessage(dto);
-                newToSend.add(saveOutbox(saved.getExternalId(), MdmServiceTarget.USER_DATA_SERVICE_ONE));
-                newToSend.add(saveOutbox(saved.getExternalId(), MdmServiceTarget.USER_DATA_SERVICE_TWO));
+                toSend.add(saveOutbox(saved.getExternalId(), MdmServiceTarget.USER_DATA_SERVICE_ONE));
+                toSend.add(saveOutbox(saved.getExternalId(), MdmServiceTarget.USER_DATA_SERVICE_TWO));
             });
-            toSend = newToSend;
         } else {
-            toSend = outboxRepository.findByMdmMessageIdAndStatusIn(
+            toSend.addAll(outboxRepository.findByMdmMessageIdAndStatusIn(
                     dto.id(),
                     List.of(MdmDeliveryStatus.NEW, MdmDeliveryStatus.ERROR)
-            );
+            ));
         }
 
         toSend.forEach(outbox -> sendToService(dto, outbox.getTarget()));
