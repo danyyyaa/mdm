@@ -35,6 +35,17 @@ spring:
             connect-timeout: 3000
             read-timeout: 3000
 
+logging:
+  console:
+    enabled: true
+  file:
+    enabled: false
+    path: /var/logs
+    name: ${spring.application.name}
+  logstash:
+    enabled: false
+
+
 mdm:
   kafka:
     send-mdm-in:

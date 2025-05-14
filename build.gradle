@@ -13,6 +13,10 @@ java.targetCompatibility = JavaVersion.VERSION_21
 
 repositories {
     mavenCentral()
+    mavenLocal()
+    maven {
+        url = uri("https://raw.githubusercontent.com/danyyyaa/logging-starter/feature/HW-3/logging-starter/maven-repo")
+    }
 }
 
 dependencyManagement {
@@ -28,6 +32,8 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
 
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    implementation 'com.danya:logging-starter:1.2-SNAPSHOT'
 
     implementation "org.liquibase:liquibase-core"
     implementation 'org.postgresql:postgresql:42.7.4'
