@@ -35,7 +35,13 @@ public record MdmProperty(
     }
 
     public record Metrics(
-            String undeliveredEvents
+            UndeliveredEvents undeliveredEvents
     ) {
+        public record UndeliveredEvents(
+                String name,
+                Long ttlMillis
+        ) {
+
+        }
     }
 }

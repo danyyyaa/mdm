@@ -20,7 +20,7 @@ public class MetricsConfig {
     @Bean
     public Gauge mdmUndeliveredGauge(MeterRegistry registry) {
         return Gauge.builder(
-                        mdmProperty.metrics().undeliveredEvents(),
+                        mdmProperty.metrics().undeliveredEvents().name(),
                         metricsService,
                         MetricsService::countUndelivered
                 )

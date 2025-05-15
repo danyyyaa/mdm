@@ -34,10 +34,6 @@ spring:
           service-two-client:
             connect-timeout: 3000
             read-timeout: 3000
-  cache:
-    caffeine:
-      spec: expireAfterAccess=0s, maximumSize=1000
-    cache-names: mdmErrorCount
 
 logging:
   console:
@@ -76,7 +72,9 @@ mdm:
       delete-interval: "0 0 0 * * *"
       threshold-weeks: 8
   metrics:
-    undelivered-events: mdm.undelivered.events
+    undelivered-events:
+      name: mdm.undelivered.events
+      ttlMillis: 10000
 
 resilience4j:
   rateLimiter:
