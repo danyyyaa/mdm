@@ -5,7 +5,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("mdm")
 public record MdmProperty(
         ProcessingPool processingPool,
-        Scheduler scheduler
+        Scheduler scheduler,
+        Metrics metrics
 ) {
 
     public record ProcessingPool(
@@ -30,6 +31,17 @@ public record MdmProperty(
         public record DeleteOldMessagesJob(
                 int thresholdWeeks
         ) {
+        }
+    }
+
+    public record Metrics(
+            UndeliveredEvents undeliveredEvents
+    ) {
+        public record UndeliveredEvents(
+                String name,
+                Long ttlMillis
+        ) {
+
         }
     }
 }
