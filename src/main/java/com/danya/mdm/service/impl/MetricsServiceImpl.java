@@ -19,9 +19,6 @@ public class MetricsServiceImpl implements MetricsService {
     private final MdmMessageOutboxRepository repository;
     private final MdmProperty mdmProperty;
 
-    private record Cache(long timestampMillis, long value) {
-    }
-
     private final AtomicReference<Cache> cacheRef = new AtomicReference<>(new Cache(0, 0));
 
     @Override
@@ -36,6 +33,9 @@ public class MetricsServiceImpl implements MetricsService {
         }
 
         return cacheRef.get().value;
+    }
+
+    private record Cache(long timestampMillis, long value) {
     }
 }
 
